@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Захиалгын Хяналтын Систем</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1f4a 0%, #222A72 50%, #2d3a8a 100%);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: #2d3a8a;
+            border-radius: 25px;
+            padding: 8px 15px;
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-bar input {
+            background: none;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 1em;
+            padding: 5px;
+            width: 100%;
+        }
+
+        .search-bar input::placeholder {
+            color: #ccc;
+        }
+
+        .search-bar button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-bar select {
+            background: #2d3a8a;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            padding: 8px 15px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #222A72;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #2d3a8a;
+        }
+
+        .orders-table th {
+            background: #1a1f4a;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .orders-table td {
+            font-size: 0.95em;
+            color: #ccc;
+        }
+
+        .orders-table tr:hover {
+            background: #2d3a8a;
+        }
+
+        .status-select {
+            background: #2d3a8a;
+            border: none;
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .order-details-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .order-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .order-modal.show {
+            display: flex;
+        }
+
+        .order-modal-content {
+            background: #2d3a8a;
+            border-radius: 15px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .order-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .order-details {
+            color: #fff;
+        }
+
+        .order-details h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .order-details p {
+            margin: 8px 0;
+            font-size: 1em;
+            color: #ccc;
+        }
+
+        .order-details ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .order-details ul li {
+            font-size: 0.95em;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .bank-info p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            color: #ccc;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                font-size: 0.85em;
+                padding: 10px;
+            }
+
+            .order-modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+
+            .bank-info p {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Захиалгын Хяналтын Систем</h1>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Гүйлгээний код, нэр, утасны дугаараар хайх..." aria-label="Захиалга хайх" />
+            <button type="button" id="search-btn" aria-label="Хайх"><i class="fas fa-search"></i></button>
+        </div>
+
+        <div class="filter-bar">
+            <select id="status-filter" aria-label="Статусаар шүүх">
+                <option value="all">Бүх статус</option>
+                <option value="new">Шинэ</option>
+                <option value="pending">Хүлээгдэж байна</option>
+                <option value="completed">Дууссан</option>
+            </select>
+        </div>
+
+        <table class="orders-table" aria-label="Захиалгын жагсаалт">
+            <thead>
+                <tr>
+                    <th>Гүйлгээний код</th>
+                    <th>Хэрэглэгч</th>
+                    <th>Нийт дүн</th>
+                    <th>Огноо</th>
+                    <th>Статус</th>
+                    <th>Үйлдэл</th>
+                </tr>
+            </thead>
+            <tbody id="orders-body"></tbody>
+        </table>
+    </div>
+
+    <div class="order-modal" id="order-modal" role="dialog" aria-labelledby="order-modal-title" aria-hidden="true">
+        <div class="order-modal-content">
+            <button class="order-modal-close" id="order-modal-close" aria-label="Модалыг хаах"><i class="fas fa-times"></i></button>
+            <div class="order-details" id="order-details">
+                <h2 id="order-modal-title">Захиалгын дэлгэрэнгүй</h2>
+                <p><strong>Гүйлгээний код:</strong> <span id="modal-order-code"></span> <button class="copy-btn" id="copy-order-code" title="Хуулах"><i class="fas fa-copy"></i></button></p>
+                <div class="bank-info">
+                    <p>Хаан банк: <span id="bank-account">5727168509</span> <button class="copy-btn" data-copy="5727168509" title="Хуулах"><i class="fas fa-copy"></i></button></p>
+                    <p>Хүлээн авагч: <span id="receiver-name">Гомбосүрэн Агиймаа</span> <button class="copy-btn" data-copy="Гомбосүрэн Агиймаа" title="Хуулах"><i class="fas fa-copy"></i></button></p>
+                    <p>IBAN: <span id="iban">MN040005005727168509</span> <button class="copy-btn" data-copy="MN040005005727168509" title="Хуулах"><i class="fas fa-copy"></i></button></p>
+                </div>
+                <p><strong>Хэрэглэгч:</strong> <span id="modal-user-name"></span></p>
+                <p><strong>Утас:</strong> <span id="modal-user-phone"></span></p>
+                <p><strong>Хаяг:</strong> <span id="modal-user-address"></span></p>
+                <p><strong>Нийт дүн:</strong> <span id="modal-total"></span></p>
+                <p><strong>Огноо:</strong> <span id="modal-date"></span></p>
+                <p><strong>Статус:</strong> <select id="modal-status" aria-label="Захиалгын статус">
+                    <option value="new">Шинэ</option>
+                    <option value="pending">Хүлээгдэж байна</option>
+                    <option value="completed">Дууссан</option>
+                </select></p>
+                <p><strong>Захиалсан бараанууд:</strong></p>
+                <ul id="modal-items"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getDatabase, ref, onValue, update } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvqB1SYZB64yFBFvS0H4iVr5ppN2Pztog",
+            authDomain: "shop-a3ca1.firebaseapp.com",
+            databaseURL: "https://shop-a3ca1-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "shop-a3ca1",
+            storageBucket: "shop-a3ca1.firebasestorage.app",
+            messagingSenderId: "524006716045",
+            appId: "1:524006716045:web:2643504eb68c8d29dbe8c4",
+            measurementId: "G-5NF2P82J4V"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const statusFilter = document.getElementById('status-filter');
+        const ordersBody = document.getElementById('orders-body');
+        const orderModal = document.getElementById('order-modal');
+        const orderModalClose = document.getElementById('order-modal-close');
+        const modalOrderCode = document.getElementById('modal-order-code');
+        const copyOrderCode = document.getElementById('copy-order-code');
+        const modalUserName = document.getElementById('modal-user-name');
+        const modalUserPhone = document.getElementById('modal-user-phone');
+        const modalUserAddress = document.getElementById('modal-user-address');
+        const modalTotal = document.getElementById('modal-total');
+        const modalDate = document.getElementById('modal-date');
+        const modalStatus = document.getElementById('modal-status');
+        const modalItems = document.getElementById('modal-items');
+
+        let orders = [];
+
+        function fetchOrders(searchQuery = '', statusFilterValue = 'all') {
+            const ordersRef = ref(database, 'orders');
+            onValue(ordersRef, (snapshot) => {
+                orders = [];
+                const data = snapshot.val();
+                if (data) {
+                    Object.keys(data).forEach((key) => {
+                        const order = { id: key, ...data[key] };
+                        const matchesSearch = !searchQuery ||
+                            order.orderCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            order.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            order.user.phone.includes(searchQuery);
+                        const matchesStatus = statusFilterValue === 'all' || order.status === statusFilterValue;
+                        if (matchesSearch && matchesStatus) {
+                            orders.push(order);
+                        }
+                    });
+                }
+                renderOrders();
+            }, (error) => {
+                console.error('Error fetching orders:', error);
+                alert('Захиалгыг татахад алдаа гарлаа.');
+            });
+        }
+
+        function renderOrders() {
+            ordersBody.innerHTML = '';
+            if (orders.length === 0) {
+                ordersBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #ccc;">Захиалга олдсонгүй.</td></tr>';
+            } else {
+                orders.forEach((order) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${order.orderCode}</td>
+                        <td>${order.user.name}</td>
+                        <td>${order.total.toLocaleString()} ₮</td>
+                        <td>${new Date(order.timestamp).toLocaleString('mn-MN')}</td>
+                        <td>
+                            <select class="status-select" data-order-id="${order.id}">
+                                <option value="new" ${order.status === 'new' ? 'selected' : ''}>Шинэ</option>
+                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Хүлээгдэж байна</option>
+                                <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Дууссан</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="order-details-btn" data-order-id="${order.id}" aria-label="Дэлгэрэнгүй харах">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    `;
+                    ordersBody.appendChild(row);
+                });
+            }
+
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const orderId = e.target.dataset.orderId;
+                    const newStatus = e.target.value;
+                    updateOrderStatus(orderId, newStatus);
+                });
+            });
+
+            document.querySelectorAll('.order-details-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const orderId = btn.dataset.orderId;
+                    showOrderDetails(orderId);
+                });
+            });
+        }
+
+        function updateOrderStatus(orderId, status) {
+            const orderRef = ref(database, `orders/${orderId}`);
+            update(orderRef, { status })
+                .then(() => {
+                    console.log(`Order ${orderId} status updated to ${status}`);
+                    fetchOrders(searchInput.value, statusFilter.value);
+                })
+                .catch(error => {
+                    console.error('Error updating status:', error);
+                    alert('Статус шинэчлэхэд алдаа гарлаа.');
+                });
+        }
+
+        function showOrderDetails(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                modalOrderCode.textContent = order.orderCode;
+                copyOrderCode.setAttribute('data-copy', order.orderCode);
+                modalUserName.textContent = order.user.name;
+                modalUserPhone.textContent = order.user.phone;
+                modalUserAddress.textContent = `${order.user.city}${order.user.district ? ', ' + order.user.district : ''}, ${order.user.address}`;
+                modalTotal.textContent = `${order.total.toLocaleString()} ₮`;
+                modalDate.textContent = new Date(order.timestamp).toLocaleString('mn-MN');
+                modalStatus.value = order.status || 'new';
+                modalItems.innerHTML = '';
+                order.items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `${item.name} (${item.color}, ${item.size}) - ${item.quantity} ширхэг, ${item.price}`;
+                    modalItems.appendChild(li);
+                });
+
+                modalStatus.onchange = () => {
+                    updateOrderStatus(orderId, modalStatus.value);
+                    orderModal.classList.remove('show');
+                };
+
+                orderModal.classList.add('show');
+                console.log('Order details shown for:', order.orderCode);
+            }
+        }
+
+        searchBtn.addEventListener('click', () => {
+            fetchOrders(searchInput.value, statusFilter.value);
+            console.log('Search performed:', searchInput.value);
+        });
+
+        searchInput.addEventListener('input', () => {
+            fetchOrders(searchInput.value, statusFilter.value);
+        });
+
+        statusFilter.addEventListener('change', () => {
+            fetchOrders(searchInput.value, statusFilter.value);
+            console.log('Status filter changed:', statusFilter.value);
+        });
+
+        orderModalClose.addEventListener('click', () => {
+            orderModal.classList.remove('show');
+            console.log('Order modal closed');
+        });
+
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const textToCopy = btn.getAttribute('data-copy');
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    alert('Хуулагдлаа!');
+                    console.log('Copied to clipboard:', textToCopy);
+                }).catch(err => {
+                    console.error('Clipboard copy failed:', err);
+                    alert('Хуулахад алдаа гарлаа.');
+                });
+            });
+        });
+
+        // Initial fetch
+        fetchOrders();
+    </script>
+</body>
+</html>
